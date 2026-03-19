@@ -250,6 +250,19 @@ div[data-testid="stButton"] > button[kind="primary"]:hover {
     margin-top: 24px;
 }
 
+/* ── Main content text (prevent white-on-white) ── */
+[data-testid="stAppViewContainer"] p,
+[data-testid="stAppViewContainer"] li,
+[data-testid="stAppViewContainer"] ul,
+[data-testid="stAppViewContainer"] ol,
+[data-testid="stAppViewContainer"] span:not([style*="color"]),
+.stMarkdown p,
+.stMarkdown li,
+.stMarkdown ul,
+.stMarkdown ol {
+    color: #333333 !important;
+}
+
 /* Hide Streamlit branding ── */
 #MainMenu, footer, header { visibility: hidden; }
 </style>
