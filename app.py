@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from sqlalchemy import create_engine
+from sklearn.datasets import fetch_openml
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
@@ -256,15 +257,30 @@ div[data-testid="stButton"] > button[kind="primary"]:hover {
 
 
 # ── Model training ─────────────────────────────────────────────────────────────
-@st.cache_resource(show_spinner="Training model from database…")
+def _load_dataframe() -> pd.DataFrame:
+    """Try Neon DB first, fall back to UCI OpenML dataset."""
+    db_url = os.environ.get("DATABASE_URL")
+    if db_url:
+        try:
+            engine = create_engine(db_url, connect_args={"sslmode": "require"})
+            return pd.read_sql("SELECT * FROM heart_disease", engine)
+        except Exception:
+            pass
+    # Fallback: fetch UCI Heart Disease dataset from OpenML
+    data = fetch_openml("heart-disease", version=1, as_frame=True, parser="auto")
+    df = data.frame.copy()
+    df.columns = [c.lower() for c in df.columns]
+    # OpenML uses 'num' as the target column; binarise to 0/1
+    if "num" in df.columns:
+        df = df.rename(columns={"num": "target"})
+    df["target"] = (df["target"].astype(int) > 0).astype(int)
+    df = df.apply(pd.to_numeric, errors="coerce").dropna()
+    return df
+
+
+@st.cache_resource(show_spinner="Training model…")
 def load_model():
-    db_url = os.environ["DATABASE_URL"]
-    engine = create_engine(db_url, connect_args={"sslmode": "require"})
-    # Try both possible table names
-    try:
-        df = pd.read_sql("SELECT * FROM heart_disease", engine)
-    except Exception:
-        df = pd.read_sql('SELECT * FROM "heart_disease"', engine)
+    df = _load_dataframe()
 
     features = ["age", "sex", "cp", "trestbps", "chol", "fbs",
                 "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal"]
