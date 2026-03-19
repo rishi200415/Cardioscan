@@ -501,7 +501,6 @@ st.markdown("""
 
 
 # ── Input form ─────────────────────────────────────────────────────────────────
-st.markdown('<div class="card">', unsafe_allow_html=True)
 st.markdown('<div class="card-title">📋 Patient Information</div>', unsafe_allow_html=True)
 st.markdown('<div class="card-subtitle">Enter the patient\'s clinical measurements below. All fields are required for an accurate prediction.</div>', unsafe_allow_html=True)
 
@@ -582,8 +581,6 @@ with c13:
                         format_func=lambda x: {3: "Normal", 6: "Fixed Defect", 7: "Reversible Defect"}[x])
     st.markdown('<div class="field-desc">Nuclear stress test result. Reversible defects indicate areas of ischemia; fixed defects suggest prior infarction.</div>', unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
-
 
 # ── Predict button ─────────────────────────────────────────────────────────────
 predict_clicked = st.button("🔬  Analyze Heart Disease Risk", type="primary", use_container_width=True)
@@ -635,7 +632,6 @@ if predict_clicked:
     g_col, m_col = st.columns([3, 2], gap="large")
 
     with g_col:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown('<div class="card-title">📈 Risk Gauge</div>', unsafe_allow_html=True)
         st.plotly_chart(make_gauge(prob_disease), use_container_width=True, config={"displayModeBar": False})
         st.markdown(f"""
@@ -643,10 +639,8 @@ if predict_clicked:
             Decision threshold: {OPTIMAL_THRESHOLD:.3f} (tuned for ≥95% recall) &nbsp;·&nbsp; Red tick = threshold
         </div>
         """, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
 
     with m_col:
-        st.markdown('<div class="card" style="height:100%;">', unsafe_allow_html=True)
         st.markdown('<div class="card-title">📊 Probability Breakdown</div>', unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -675,12 +669,16 @@ if predict_clicked:
             <b>Training:</b> UCI Combined Dataset
         </div>
         """, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
 
     # ── Risk factor breakdown
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown('<div class="card-title">🔍 Risk Factor Analysis</div>', unsafe_allow_html=True)
     st.markdown('<div class="card-subtitle">Individual clinical markers contributing to the overall risk assessment.</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div style="font-size:0.78rem; color:#666; margin-bottom:12px; display:flex; gap:16px; align-items:center;">
+        <span><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#E74C3C; margin-right:5px;"></span><b>Red pills</b> — risk factors</span>
+        <span><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#27AE60; margin-right:5px;"></span><b>Green pills</b> — protective factors</span>
+    </div>
+    """, unsafe_allow_html=True)
 
     rf_col, sf_col = st.columns(2)
     with rf_col:
@@ -698,10 +696,9 @@ if predict_clicked:
         else:
             st.markdown("*No notable protective factors identified.*")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("---")
 
     # ── What this means
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown('<div class="card-title">💡 Understanding Your Results</div>', unsafe_allow_html=True)
 
     if prediction == 1:
@@ -730,10 +727,9 @@ if predict_clicked:
         - Avoid smoking and limit alcohol consumption
         """)
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("---")
 
     # ── Lifestyle recommendations
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown('<div class="card-title">🌿 Lifestyle Recommendations</div>', unsafe_allow_html=True)
     st.markdown('<div class="card-subtitle">Evidence-based recommendations for cardiovascular health.</div>', unsafe_allow_html=True)
 
@@ -763,7 +759,7 @@ if predict_clicked:
             </div>
             """, unsafe_allow_html=True)
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("---")
 
     # ── Disclaimer
     st.markdown("""
