@@ -259,8 +259,12 @@ div[data-testid="stButton"] > button[kind="primary"]:hover {
 @st.cache_resource(show_spinner="Training model from database…")
 def load_model():
     db_url = os.environ["DATABASE_URL"]
-    engine = create_engine(db_url)
-    df = pd.read_sql("SELECT * FROM heart_disease", engine)
+    engine = create_engine(db_url, connect_args={"sslmode": "require"})
+    # Try both possible table names
+    try:
+        df = pd.read_sql("SELECT * FROM heart_disease", engine)
+    except Exception:
+        df = pd.read_sql('SELECT * FROM "heart_disease"', engine)
 
     features = ["age", "sex", "cp", "trestbps", "chol", "fbs",
                 "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal"]
