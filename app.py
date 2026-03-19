@@ -258,12 +258,9 @@ div[data-testid="stButton"] > button[kind="primary"]:hover {
 # ── Model training ─────────────────────────────────────────────────────────────
 @st.cache_resource(show_spinner="Training model from database…")
 def load_model():
-    db_url = os.getenv(
-        "DATABASE_URL",
-        "postgresql://postgres:password@localhost:5432/healthcare",
-    )
+    db_url = os.environ["DATABASE_URL"]
     engine = create_engine(db_url)
-    df = pd.read_sql("SELECT * FROM heart_disease_large", engine)
+    df = pd.read_sql("SELECT * FROM heart_disease", engine)
 
     features = ["age", "sex", "cp", "trestbps", "chol", "fbs",
                 "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal"]
